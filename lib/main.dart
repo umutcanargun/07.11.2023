@@ -71,12 +71,13 @@ class QuestionScreen extends StatefulWidget {
 class _QuestionState extends State<QuestionScreen> {
   int initialQuestionIndex = 0;
   int properlyAnsweredQuestions = 0;
-  var storeAnswers = new Map();
+  var storeAnswers = <String>[];
 
   void checkAnswer(String selectedAnswer) {
     if (questions[initialQuestionIndex].trueAnswer == selectedAnswer) {
       setState(() {
-        storeAnswers[questions[initialQuestionIndex]] = selectedAnswer;
+        storeAnswers.add(
+            "The question was ${questions[initialQuestionIndex].question}, your answer was ${selectedAnswer}");
         properlyAnsweredQuestions++;
       });
     }
@@ -89,9 +90,8 @@ class _QuestionState extends State<QuestionScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => ResultScreen(
-            properlyAnsweredQuestions: properlyAnsweredQuestions,
-            storeAnswers: storeAnswers,
-          ),
+              properlyAnsweredQuestions: properlyAnsweredQuestions,
+              storeAnswers: storeAnswers),
         ),
       );
     }
@@ -132,7 +132,7 @@ class _QuestionState extends State<QuestionScreen> {
 
 class ResultScreen extends StatelessWidget {
   final int properlyAnsweredQuestions;
-  final Map storeAnswers;
+  final storeAnswers;
 
   const ResultScreen(
       {Key? key,
@@ -148,6 +148,20 @@ class ResultScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(
+              height: 400,
+              child: ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(8),
+                  itemCount: storeAnswers.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Text(
+                      storeAnswers[index],
+                      style: TextStyle(fontSize: 15.0),
+                    );
+                  }),
+            ),
             Text(
               "Quiz is over, score is $properlyAnsweredQuestions over 10",
               style: const TextStyle(fontSize: 16, color: Colors.black),
