@@ -21,7 +21,7 @@ class StartScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("assets/pngwing.com.png"),
+            //Image.asset("assets/pngwing.com.png"),
             const Text(
               "Welcome to Math Quiz",
               style: TextStyle(
@@ -31,6 +31,7 @@ class StartScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(fixedSize: const Size(180, 60)),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -38,11 +39,18 @@ class StartScreen extends StatelessWidget {
                       builder: (context) => const QuestionScreen()),
                 );
               },
-              icon: const Icon(Icons.arrow_right_alt),
-              label: const Text("Start"),
-              style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  padding: const EdgeInsets.fromLTRB(40, 20, 40, 20)),
+              icon: const Icon(
+                Icons.arrow_right_alt,
+                size: 40.0,
+                color: Colors.red,
+              ),
+              label: const Text(
+                "Start",
+                style: TextStyle(
+                  fontSize: 30.0,
+                  color: Colors.red,
+                ),
+              ),
             ),
           ],
         ),
@@ -63,10 +71,12 @@ class QuestionScreen extends StatefulWidget {
 class _QuestionState extends State<QuestionScreen> {
   int initialQuestionIndex = 0;
   int properlyAnsweredQuestions = 0;
+  var storeAnswers = new Map();
 
   void checkAnswer(String selectedAnswer) {
     if (questions[initialQuestionIndex].trueAnswer == selectedAnswer) {
       setState(() {
+        storeAnswers[questions[initialQuestionIndex]] = selectedAnswer;
         properlyAnsweredQuestions++;
       });
     }
@@ -79,7 +89,9 @@ class _QuestionState extends State<QuestionScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => ResultScreen(
-              properlyAnsweredQuestions: properlyAnsweredQuestions),
+            properlyAnsweredQuestions: properlyAnsweredQuestions,
+            storeAnswers: storeAnswers,
+          ),
         ),
       );
     }
@@ -92,21 +104,26 @@ class _QuestionState extends State<QuestionScreen> {
       body: Center(
         child:
             Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          Text(questions[initialQuestionIndex].question),
+          Text(
+            questions[initialQuestionIndex].question,
+            style: const TextStyle(fontSize: 25.0),
+          ),
           ...questions[initialQuestionIndex].options.map((answer) {
             return OutlinedButton(
                 onPressed: () {
                   checkAnswer(answer);
                 },
+                style: OutlinedButton.styleFrom(fixedSize: const Size(200, 80)),
                 child: Text(
                   answer,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                       backgroundColor: Color.fromARGB(255, 255, 255, 255),
-                      color: Colors.black),
+                      color: Colors.red,
+                      fontSize: 25.0),
                 ));
           }),
-          const SizedBox(height: 20),
+          //const SizedBox(height: 20),
         ]),
       ),
     );
@@ -115,8 +132,12 @@ class _QuestionState extends State<QuestionScreen> {
 
 class ResultScreen extends StatelessWidget {
   final int properlyAnsweredQuestions;
+  final Map storeAnswers;
 
-  const ResultScreen({Key? key, required this.properlyAnsweredQuestions})
+  const ResultScreen(
+      {Key? key,
+      required this.properlyAnsweredQuestions,
+      required this.storeAnswers})
       : super(key: key);
 
   @override
@@ -128,7 +149,7 @@ class ResultScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "Quiz is over, $properlyAnsweredQuestions questions were answered correctly!",
+              "Quiz is over, score is $properlyAnsweredQuestions over 10",
               style: const TextStyle(fontSize: 16, color: Colors.black),
             ),
             const SizedBox(height: 20),
