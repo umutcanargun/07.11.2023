@@ -77,7 +77,7 @@ class _QuestionState extends State<QuestionScreen> {
     if (questions[initialQuestionIndex].trueAnswer == selectedAnswer) {
       setState(() {
         storeAnswers.add(
-            "The question was ${questions[initialQuestionIndex].question}, your answer was ${selectedAnswer}");
+            "The question: ${questions[initialQuestionIndex].question}; given answer: ${selectedAnswer}");
         properlyAnsweredQuestions++;
       });
     }
@@ -148,26 +148,43 @@ class ResultScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              height: 400,
-              child: ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(8),
-                  itemCount: storeAnswers.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Text(
-                      storeAnswers[index],
-                      style: TextStyle(fontSize: 15.0),
-                    );
-                  }),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.separated(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(8),
+                itemCount: storeAnswers.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Text(
+                    storeAnswers[index],
+                    style: TextStyle(
+                        fontSize: 17.0,
+                        color: Colors.yellow,
+                        backgroundColor: Colors.blue),
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) => SizedBox(
+                  height: 10,
+                ),
+              ),
             ),
-            Text(
-              "Quiz is over, score is $properlyAnsweredQuestions over 10",
-              style: const TextStyle(fontSize: 16, color: Colors.black),
+            SizedBox(
+              child: Text(
+                "Quiz is over, score is $properlyAnsweredQuestions over 10",
+                style: const TextStyle(
+                    fontSize: 17,
+                    color: Colors.red,
+                    backgroundColor: Colors.yellow),
+              ),
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
+              style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(9.0),
+                          side: BorderSide(color: Colors.red)))),
               onPressed: () {
                 Navigator.popUntil(context, (route) => route.isFirst);
               },
@@ -175,10 +192,6 @@ class ResultScreen extends StatelessWidget {
               label: const Text(
                 "Start the Quiz Again",
                 style: TextStyle(fontSize: 20),
-              ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.fromLTRB(25, 20, 25, 20),
               ),
             ),
           ],
